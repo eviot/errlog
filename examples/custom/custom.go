@@ -3,8 +3,8 @@ package main
 import (
 	"errors"
 
+	"github.com/eviot/errlog"
 	"github.com/sirupsen/logrus"
-	"github.com/snwfdhmp/errlog"
 )
 
 var (

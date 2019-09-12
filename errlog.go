@@ -89,6 +89,12 @@ func Debug(uErr error) bool {
 	return DefaultLogger.Debug(uErr)
 }
 
+//Debugx is a shortcut for DefaultLogger.Debug.
+func Debugx(uErr error, args ...interface{}) bool {
+	DefaultLogger.Overload(1) // Prevents from adding this func to the stack trace
+	return DefaultLogger.Debugx(uErr, args...)
+}
+
 //PrintStack pretty prints the current stack trace
 func PrintStack() {
 	DefaultLogger.printStack(parseStackTrace(1))

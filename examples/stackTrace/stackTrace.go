@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/snwfdhmp/errlog"
+	"github.com/eviot/errlog"
 )
 
 func main() {

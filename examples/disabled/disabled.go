@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/snwfdhmp/errlog"
+	"github.com/eviot/errlog"
 )
 
 func init() {

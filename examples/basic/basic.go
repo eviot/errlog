@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/snwfdhmp/errlog"
+	"github.com/eviot/errlog"
 )
 
 func main() {
@@ -26,7 +26,7 @@ func someBigFunction() {
 
 	someDumbFunction()
 
-	if err := someNastyFunction(); errlog.Debug(err) {
+	if err := someNastyFunction(); errlog.Debugx(err, "some information") {
 		return
 	}
 

@@ -1,17 +1,23 @@
 package errlog
 
-import "fmt"
+import "log"
 
 var (
-	//DefaultLoggerPrintFunc is fmt.Printf without return values
+	//DefaultLoggerPrintFunc is log.Printf without return values
 	DefaultLoggerPrintFunc = func(format string, data ...interface{}) {
-		fmt.Printf(format+"\n", data...)
+		log.Printf(format+"\n", data...)
+	}
+
+	//DefaultLoggerPrintFunc is log.Printf without return values
+	DefaultLoggerPrintlnFunc = func(data ...interface{}) {
+		log.Println(data...)
 	}
 
 	//DefaultLogger logger implements default configuration for a logger
 	DefaultLogger = &logger{
 		config: &Config{
 			PrintFunc:          DefaultLoggerPrintFunc,
+			PrintlnFunc:        DefaultLoggerPrintlnFunc,
 			LinesBefore:        4,
 			LinesAfter:         2,
 			PrintStack:         false,

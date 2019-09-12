@@ -36,6 +36,7 @@ type Logger interface {
 //Config holds the configuration for a logger
 type Config struct {
 	PrintFunc               func(format string, data ...interface{}) //Printer func (eg: fmt.Printf)
+	PrintlnFunc             func(data ...interface{})                //Printer func (eg: fmt.Printf)
 	LinesBefore             int                                      //How many lines to print *before* the error line when printing source code
 	LinesAfter              int                                      //How many lines to print *after* the error line when printing source code
 	PrintStack              bool                                     //Shall we print stack trace ? yes/no
@@ -93,6 +94,46 @@ func (l *logger) Debug(uErr error) bool {
 
 	if l.config.PrintError {
 		l.Printf("Error in %s: %s", stLines[0].CallingObject, color.YellowString(uErr.Error()))
+	}
+
+	if l.config.PrintSource {
+		l.DebugSource(stLines[0].SourcePathRef, stLines[0].SourceLineRef)
+	}
+
+	if l.config.PrintStack {
+		l.Printf("Stack trace:")
+		l.printStack(stLines)
+	}
+
+	if l.config.ExitOnDebugSuccess {
+		os.Exit(1)
+	}
+
+	return true
+}
+
+// Debugx wraps up Logger debugging funcs related to an error
+// If the given error is nil, it returns immediately
+// It relies on Logger.Config to determine what will be printed or executed
+func (l *logger) Debugx(uErr error, args ...interface{}) bool {
+	if l.config.Mode == ModeDisabled {
+		return uErr != nil
+	}
+	l.Doctor()
+	if uErr == nil {
+		return false
+	}
+
+	stLines := parseStackTrace(1 + l.stackDepthOverload)
+	if len(stLines) < 1 {
+		l.Printf("Error: %s", uErr)
+		l.Printf("Errlog tried to debug the error but the stack trace seems empty. If you think this is an error, please open an issue at https://github.com/snwfdhmp/errlog/issues/new and provide us logs to investigate.")
+		return true
+	}
+
+	if l.config.PrintError {
+		l.Printf("Error in %s: %s", stLines[0].CallingObject, color.YellowString(uErr.Error()))
+		l.Println(args...)
 	}
 
 	if l.config.PrintSource {
@@ -226,6 +267,11 @@ func (l *logger) printStack(stLines []StackTraceItem) {
 //Printf is the function used to log
 func (l *logger) Printf(format string, data ...interface{}) {
 	l.config.PrintFunc(format, data...)
+}
+
+//Println is the function used to log
+func (l *logger) Println(data ...interface{}) {
+	l.config.PrintlnFunc(data...)
 }
 
 //Overload adds depths to remove when parsing next stack trace
